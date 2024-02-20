@@ -11,7 +11,7 @@ global w w_i eta eta_i n p L
 
 
 disp('')
-choix = 3 %1 for variation on c, 2 for variation on rho and 3 for variation on p and L
+choix = 4 %1 for variation on c, 2 for variation on eta, 3 for variation on rho and 4 for variation on p and L
 disp('')
 
 
@@ -25,13 +25,14 @@ eta = 2*10^(-5); %risk aversion of insured
 eta_i = 1*10^(-5); %risk aversion of insurer
 
 %n = 4; %number of agents over number of investors
-c = @(x) 3.*x;
+c = @(x) 2.5*x;
 rho = 0.08; %correlation across insureds
 p = 0.004; %risk proability of insureds
 L = 10*10^3; %risk loss of insureds
 pL_value = 100;
 
-c_list = [0.5,1.5,3,6,10];
+c_list = [0.4,1.2,2.5,4.5,8];
+eta_list = [0.8*10^(-5),1.3*10^(-5),2*10^(-5),3*10^(-5),5*10^(-5)];
 rho_list = [0.01,0.04,0.08,0.15,0.25];
 p_list = [0.001,0.002,0.004,0.008,0.015];
 
@@ -39,6 +40,7 @@ p_list = [0.001,0.002,0.004,0.008,0.015];
 
 epsilon_list = [];
 shortfall_list = [];
+shortfall_costaver_list = [];
 Lambda_list = [];
 Irat_list = [];
 u_opt_list = [];
@@ -66,9 +68,12 @@ if (choix == 1)
 c = @(x) c_list(k).*x
 endif
 if (choix == 2)
-rho = rho_list(k)
+eta = eta_list(k)
 endif
 if (choix == 3)
+rho = rho_list(k)
+endif
+if (choix == 4)
 p = p_list(k)
 endif
 
@@ -123,9 +128,11 @@ pL_val = p*L;
 
 %Solve the problem for different policies (ie, different defaults or shortfalls)
 
-nb_round = 47
-epsilon_list(:,k) = [0.00001,0.00005,0.0001,0.0002,0.0004,0.0007,0.0010,0.0015,0.0020,0.0025,0.0030,0.0035,0.004,0.005,0.006,0.007,0.008,0.009,0.010,0.011,0.012,0.013,0.014,0.015,0.016,0.017,0.018,0.019,0.020,0.021,0.022,0.023,0.024,0.025,0.026,0.028,0.03,0.04,0.05,0.06,0.07,0.08,0.09,0.10,0.12,0.14,0.16];
+nb_round = 10 %47
+epsilon_list(:,k) = [0.00001,0.0001,0.001,0.005,0.01,0.03,0.07,0.10,0.14,0.20];
+%epsilon_list(:,k) = [0.00001,0.00005,0.0001,0.0002,0.0004,0.0007,0.0010,0.0015,0.0020,0.0025,0.0030,0.0035,0.004,0.005,0.006,0.007,0.008,0.009,0.010,0.011,0.012,0.013,0.014,0.015,0.016,0.017,0.018,0.019,0.020,0.021,0.022,0.023,0.024,0.025,0.026,0.028,0.03,0.04,0.05,0.06,0.07,0.08,0.09,0.10,0.12,0.14,0.16];
 shortfall_list(:,k) = [1:nb_round];
+shortfall_costaver_list(:,k) = [1:nb_round];
 Lambda_list(:,k) = [1:nb_round];
 Irat_list(:,k) = [1:nb_round];
 u_opt_list(:,k) = [1:nb_round];
@@ -192,6 +199,7 @@ u_gain = (u_opt - u_no_ins)./(u_free - u_no_ins);
 %Results
 epsilon_list(i,k) = epsilon;
 shortfall_list(i,k) = I_opt.*quadgk(@(x) F_inverse(x),1-epsilon,1) - I_opt.*quadgk(@(x) F_inv*f(x),F_inv,1);
+shortfall_costaver_list(i,k) = shortfall_list(i,k) / (c(1)*eta_list(3)/(c_list(3)*eta));
 Lambda_list(i,k) = (P_star(L)-pL_default)/pL_default;
 Irat_list(i,k) = I_opt/L;
 u_opt_list(i,k) = u_opt;
@@ -243,27 +251,33 @@ delete '1nVar.csv'
 fichier = '1nVar.csv'; %Pour variation de n
 endif
 if (choix == 2)
-delete '2corVar.csv'
-fichier = '2corVar.csv'; %Pour variation de rho
+delete '2etaVar.csv'
+fichier = '2etaVar.csv'; %Pour variation de eta
 endif
 if (choix == 3)
-delete '3proVar.csv'
-fichier = '3proVar.csv'; %Pour variation de p et L
+delete '3corVar.csv'
+fichier = '3corVar.csv'; %Pour variation de rho
+endif
+if (choix == 4)
+delete '4proVar.csv'
+fichier = '4proVar.csv'; %Pour variation de p et L
 endif
 
 
 col_names = [];
 for k = 1 : 5
-nb = 1+5*(k-1)
-col_names(nb) = 1+5*(k-1);
-nb = 2+5*(k-1)
-col_names(nb) = 2+5*(k-1);
-nb = 3+5*(k-1)
-col_names(nb) = 3+5*(k-1);
-nb = 4+5*(k-1)
-col_names(nb) = 4+5*(k-1);
-nb = 5+5*(k-1)
-col_names(nb) = 5+5*(k-1);
+nb = 1+6*(k-1)
+col_names(nb) = nb;
+nb = 2+6*(k-1)
+col_names(nb) = nb;
+nb = 3+6*(k-1)
+col_names(nb) = nb;
+nb = 4+6*(k-1)
+col_names(nb) = nb;
+nb = 5+6*(k-1)
+col_names(nb) = nb;
+nb = 6+6*(k-1)
+col_names(nb) = nb;
 end
 dlmwrite(fichier,col_names,'-append')
 
@@ -275,15 +289,17 @@ for i = 1 : nb_round
 
 list = [];
 for k = 1 : 5
-nb = 1+5*(k-1)
+nb = 1+6*(k-1)
 list(nb) = epsilon_list(i,k);
-nb = 2+5*(k-1)
+nb = 2+6*(k-1)
 list(nb) = shortfall_list(i,k);
-nb = 3+5*(k-1)
+nb = 3+6*(k-1)
+list(nb) = shortfall_costaver_list(i,k);
+nb = 4+6*(k-1)
 list(nb) = Lambda_list(i,k);
-nb = 4+5*(k-1)
+nb = 5+6*(k-1)
 list(nb) = Irat_list(i,k);
-nb = 5+5*(k-1)
+nb = 6+6*(k-1)
 list(nb) = Wrat_list(i,k);
 end
 dlmwrite(fichier,list,'-append','precision',5)
