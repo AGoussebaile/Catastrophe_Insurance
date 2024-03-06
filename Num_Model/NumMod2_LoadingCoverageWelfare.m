@@ -11,7 +11,7 @@ global w w_i eta eta_i n p L
 
 
 disp('')
-choix = 4 %1 for variation on c, 2 for variation on eta, 3 for variation on rho and 4 for variation on p and L
+choix = 1 %1 for variation on c, 2 for variation on eta, 3 for variation on rho and 4 for variation on p and L
 disp('')
 
 
@@ -128,9 +128,9 @@ pL_val = p*L;
 
 %Solve the problem for different policies (ie, different defaults or shortfalls)
 
-nb_round = 10 %47
-epsilon_list(:,k) = [0.00001,0.0001,0.001,0.005,0.01,0.03,0.07,0.10,0.14,0.20];
-%epsilon_list(:,k) = [0.00001,0.00005,0.0001,0.0002,0.0004,0.0007,0.0010,0.0015,0.0020,0.0025,0.0030,0.0035,0.004,0.005,0.006,0.007,0.008,0.009,0.010,0.011,0.012,0.013,0.014,0.015,0.016,0.017,0.018,0.019,0.020,0.021,0.022,0.023,0.024,0.025,0.026,0.028,0.03,0.04,0.05,0.06,0.07,0.08,0.09,0.10,0.12,0.14,0.16];
+nb_round = 54 %10
+%epsilon_list(:,k) = [0.00001,0.0001,0.001,0.005,0.01,0.03,0.07,0.10,0.14,0.20];
+epsilon_list(:,k) = [0.00001,0.00005,0.0001,0.0002,0.0004,0.0007,0.0010,0.0015,0.0020,0.0025,0.0030,0.0035,0.004,0.005,0.006,0.007,0.008,0.009,0.010,0.011,0.012,0.013,0.014,0.015,0.016,0.017,0.018,0.019,0.020,0.021,0.022,0.023,0.024,0.025,0.026,0.028,0.03,0.035,0.04,0.045,0.05,0.06,0.07,0.08,0.09,0.10,0.11,0.12,0.13,0.14,0.15,0.17,0.19,0.21];
 shortfall_list(:,k) = [1:nb_round];
 shortfall_costaver_list(:,k) = [1:nb_round];
 Lambda_list(:,k) = [1:nb_round];
